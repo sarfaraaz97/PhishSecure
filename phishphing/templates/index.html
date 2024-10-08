@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Phishbuster</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <style>
+      /* Overall Page Animation and Styling */
+      body {
+        font-family: "Krub", sans-serif;
+        background-color: #f4f7fa;
+        color: #2d405f;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+      }
+
+      h1 {
+        font-size: 48px;
+        font-weight: 700;
+        line-height: 56px;
+        color: #2d405f;
+        text-align: center;
+        margin: 40px 0;
+        animation: fadeInDown 1s ease-out;
+      }
+
+      .container {
+        margin-top: 20px;
+      }
+
+      .form-control {
+        border: 2px solid #2d405f;
+        padding: 10px;
+        border-radius: 5px;
+        transition: transform 0.3s ease;
+      }
+
+      .form-control:focus {
+        transform: scale(1.05);
+        border-color: #4f627a;
+      }
+
+      .button-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 15px;
+      }
+
+      .btn-primary {
+        width: 150px;
+        height: 45px;
+        border-radius: 5px;
+        background-color: #2d405f;
+        font-weight: bold;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+      }
+
+      .btn-primary:hover {
+        background-color: #1c2b3d;
+        transform: scale(1.1);
+      }
+
+      .image-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        animation: fadeIn 1.5s ease-out;
+      }
+
+      .img-fluid {
+        max-width: 100%;
+        height: auto;
+        border-radius: 15px;
+        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+
+      .img-fluid:hover {
+        transform: scale(1.05);
+      }
+
+      /* FAQ Section Styles with Animation */
+      .faq-container {
+        margin: 30px auto;
+        max-width: 800px;
+        padding: 0 15px;
+        animation: fadeInUp 2s ease-out;
+      }
+
+      .accordion-item {
+        border: none;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+      }
+
+      .accordion-item.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .accordion-header button {
+        background-color: #2d405f;
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 18px;
+        padding: 15px;
+        border-radius: 10px;
+        transition: background-color 0.3s ease;
+      }
+
+      .accordion-header button.collapsed {
+        background-color: #4f627a;
+      }
+
+      .accordion-header button:hover {
+        background-color: #1c2b3d;
+      }
+
+      .accordion-body {
+        background-color: #f7f7f7;
+        padding: 20px;
+        font-size: 16px;
+        line-height: 1.6;
+        border-radius: 0 0 10px 10px;
+      }
+
+      /* About Section Styling */
+      #about {
+        background: #2d405f;
+        padding: 50px 0;
+        color: #ffffff;
+        animation: fadeInUp 2.5s ease-out;
+      }
+
+      .section-title {
+        margin-bottom: 40px;
+      }
+
+      .section-title h2 {
+        font-size: 36px;
+        margin-bottom: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .section-title p {
+        font-size: 16px;
+        line-height: 1.7;
+        margin-bottom: 20px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .heading-underline {
+        width: 80px;
+        height: 4px;
+        background-color: #ffffff;
+        margin: 10px auto;
+        border-radius: 2px;
+      }
+
+      /* Keyframe Animations */
+      @keyframes fadeIn {
+        0% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      @keyframes fadeInDown {
+        0% {
+          opacity: 0;
+          transform: translateY(-30px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInUp {
+        0% {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const accordionItems = document.querySelectorAll(".accordion-item");
+        accordionItems.forEach((item, index) => {
+          setTimeout(() => {
+            item.classList.add("visible");
+          }, index * 300); // Adjust the delay for each item
+        });
+      });
+    </script>
+  </head>
+
+  <body>
+    {% include 'navbar.html' %}
+    <br />
+    <br />
+    <br />
+    <br />
+    <h1>PhishSecure</h1>
+    <div class="container col-lg-7">
+      <form method="POST">
+        {% csrf_token %}
+        <input
+          placeholder="Enter url link in http or https format"
+          name="url"
+          type="text"
+          class="form-control"
+          id="exampleInputEmail1"
+          aria-describedby="emailHelp"
+          required
+        />
+        <div class="button-container">
+          <button type="submit" class="btn btn-primary">Predict</button>
+        </div>
+      </form>
+      <div class="image-container">
+        <img
+          src="https://its.ucsc.edu/security/newsecurity.png"
+          class="img-fluid"
+          alt="Phishing Illustration"
+        />
+      </div>
+
+      <!-- FAQ Section -->
+      <div class="faq-container">
+        <div class="accordion" id="faqAccordion">
+          <!-- Existing FAQ Items -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faq-headingOne">
+              <button
+                class="accordion-button"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#faq-collapseOne"
+                aria-expanded="true"
+                aria-controls="faq-collapseOne"
+              >
+                What is Phishing?
+              </button>
+            </h2>
+            <div
+              id="faq-collapseOne"
+              class="accordion-collapse collapse show"
+              aria-labelledby="faq-headingOne"
+            >
+              <div class="accordion-body">
+                Phishing is a cybercrime in which a target or targets are
+                contacted by email, telephone, or text message by someone posing
+                as a legitimate institution to lure individuals into providing
+                sensitive data such as personally identifiable information,
+                banking and credit card details, and passwords. OR Phishing is a
+                cyber attack where the attacker tricks the target into
+                disclosing personal information, revealing login credentials, or
+                transferring money.
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faq-headingTwo">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#faq-collapseTwo"
+                aria-expanded="false"
+                aria-controls="faq-collapseTwo"
+              >
+                Why should I bother Knowing what Phishing is all about?
+              </button>
+            </h2>
+            <div
+              id="faq-collapseTwo"
+              class="accordion-collapse collapse"
+              aria-labelledby="faq-headingTwo"
+            >
+              <div class="accordion-body">
+                The purpose of phishing is to collect sensitive information with
+                the intention of using that information to gain access to
+                otherwise protected data, networks, etc. A phisher's success is
+                contingent upon establishing trust with its victims. Successful
+                Phishing attacks can:
+
+                <ul>
+                  <li>Cause financial loss for victims</li>
+                  <li>Put their personal information at risk</li>
+                  <li>Put data and systems at risk</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faq-headingThree">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#faq-collapseThree"
+                aria-expanded="false"
+                aria-controls="faq-collapseThree"
+              >
+                Two Major Types of Phishing Attack
+              </button>
+            </h2>
+            <div
+              id="faq-collapseThree"
+              class="accordion-collapse collapse"
+              aria-labelledby="faq-headingThree"
+            >
+              <div class="accordion-body">
+                Deceptive Phishing: Deceptive phishing is by far the most common
+                type of phishing scam. In this ploy, fraudsters impersonate a
+                legitimate company to steal people’s personal data or login
+                credentials. Those emails frequently use threats and a sense of
+                urgency to scare users into doing what the attackers want. Spear
+                Phishing: Spear Phishing targets specific individuals instead of
+                a wide group of people. Attackers often research their victims
+                on social media and other sites. That way, they can customize
+                their communications and appear more authentic. Other phishing
+                Techniques:
+
+                <ul>
+                  <li>
+                    Angler Phishing: This cyberattack comes by way of social
+                    media. It may involve fake URLs, instant messages, or
+                    profiles used to obtain sensitive data. Attackers also
+                    peruse social profiles to glean any personal information
+                    they can use for social engineering.
+                  </li>
+                  <li>
+                    Clone Phishing: Clone phishing involves exact duplication of
+                    an email to make it appear as legitimate as possible.
+                  </li>
+                  <li>
+                    Domain Spoofing: In this category of phishing, the attacker
+                    forges a company domain, which makes the email appear to be
+                    from that company.
+                  </li>
+                  <li>
+                    Email Phishing: Phishing emails are often the first to come
+                    to mind when people hear the term phishing. Attackers send
+                    an illegitimate email asking for personal information or
+                    login credentials.
+                  </li>
+                  <li>
+                    Search Engine Phishing: Rather than sending correspondence
+                    to you to gain information, search engine phishing involves
+                    creating a website that mimics a legitimate site. Site
+                    visitors are asked to download products that are infected
+                    with malware or provide personal information in forms that
+                    go to the attacker.
+                  </li>
+                  <li>
+                    Smishing: Combine SMS with phishing and you have the
+                    technique called smishing. With smishing, attackers send
+                    fraudulent text messages in an attempt to gather information
+                    like credit card numbers or passwords.
+                  </li>
+                  <li>
+                    Whaling: A whaling attack targets the big fish, or
+                    executive-level employees. An attack of this sort often
+                    involves more sophisticated social engineering tactics and
+                    intelligence gathering to better sell the fake.
+                  </li>
+                  <li>
+                    Vishing: Combine VoIP with phishing and you get vishing.
+                    This type of phishing involves calls from a fraudulent
+                    person attempting to obtain sensitive information.
+                  </li>
+                  <li>
+                    Malvertising: Malvertising is malicious advertising that
+                    contains active scripts designed to download malware or
+                    force unwanted content onto your computer. Exploits in Adobe
+                    PDF and Flash are the most common methods used in
+                    malvertisements.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faq-headingFour">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#faq-collapseFour"
+                aria-expanded="false"
+                aria-controls="faq-collapseFour"
+              >
+                How to Prevent and Protect Against Phishing As An End-user?
+              </button>
+            </h2>
+            <div
+              id="faq-collapseFour"
+              class="accordion-collapse collapse"
+              aria-labelledby="faq-headingFour"
+            >
+              <div class="accordion-body">
+                To help prevent phishing attacks, you should observe general
+                best practices, similar to those you might undertake to avoid
+                viruses and other malware. First, make sure your systems are
+                updated to help protect against known vulnerabilities. Protect
+                devices and systems with reputable security software and
+                firewall protection. You can also add software that watches for
+                PII being sent over email or other insecure methods.
+                <br /><br />
+                Since the weak link in phishing attacks is the end user, you
+                should provide proper end-user security awareness training and
+                educate your team on how to recognize a phishing scam. The key
+                to protecting against phishing lies in the ability to recognize
+                the cyberattack as illegitimate. Following are some key concepts
+                to include in end-user training:
+                <ul>
+                  <li>
+                    Users are to choose strong passwords and be wary of posting
+                    your personal details on social media. Information like
+                    birthdates, addresses, and phone numbers are valuable to an
+                    attacker.
+                  </li>
+                  <li>
+                    If there are any suspicions about an email or social post,
+                    contact the IT team to have them examine the situation.
+                  </li>
+                  <li>
+                    Only open attachments from a trusted source. When in doubt,
+                    check with the alleged sender directly.
+                  </li>
+                  <li>
+                    Note any language differences in messaging or emails that
+                    vary from legitimate organizational communications.
+                  </li>
+                  <li>
+                    Never give away personal information in an email or
+                    unsolicited call. For instance, financial institutions will
+                    never call and ask for login credentials or account info
+                    because they already have it.
+                  </li>
+                  <li>
+                    Inspect emails for typos and inaccurate grammar. This is
+                    usually a dead giveaway of less-sophisticated phishing
+                    scams.
+                  </li>
+                  <li>Don’t supply personal information via email or text.</li>
+                  <li>
+                    Beware of urgent or time-sensitive warnings. Phishing
+                    attacks often prompt action by pretending to be urgent.
+                  </li>
+                  <li>
+                    Verify emails and other correspondence by contacting the
+                    organization directly. If you think something is fishy
+                    (okay, bad pun), a phone call can quickly identify a
+                    legitimate call from a fake one.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br />
+    <section
+      id="about"
+      class="about"
+      style="background: #2d405f; padding: 50px 0; /* Adjusted padding */"
+    >
+      <div class="container">
+        <div class="section-title text-center text-white">
+          <h2>About PhishSecure</h2>
+          <!-- Line under the heading -->
+          <div class="heading-underline"></div>
+          <p>
+            PhishSecure is a project that came into existence from a final year
+            project “Detection of Phishing Website Using Machine Learning”
+            carried out at Srinivasa Ramanujan Institute of Technology. It aims
+            to help reduce phishing attacks by helping internet users
+            authenticate URL links by testing if they are phishing or
+            legitimate. The progress of validating a Website URL for phishing or
+            legitimacy has gone through several machine learning models.
+          </p>
+
+          <h3>About the Author</h3>
+          <div class="heading-underline"></div>
+          <p>
+            A final-year student of Computer Science and Information Technology
+            at Srinivasa Ramanujan Institute of Technology. who aspires to
+            further career into Cyber Security.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-yBrrJpugQsD4E84gVOVhTL8n77FNG4fx1XXfVGqZj1Q5GKY4ThHwh1JAmjGkn+Ea"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+      integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
